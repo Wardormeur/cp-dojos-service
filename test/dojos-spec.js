@@ -185,7 +185,7 @@ lab.experiment('Dojo Microservice test', function () {
 
             var expectedFields = ['admin1Code', 'admin1Name', 'alpha2', 'alpha3', 'continent',
               'coordinates', 'country', 'countryName', 'countryNumber',
-              'county', 'deleted', 'email', 'location', 'mailingList',
+              'county', 'deleted', 'email', 'mailingList',
               'mysqlDojoId', 'name', 'needMentors', 'notes', 'place',
               'placeGeonameId', 'placeName', 'private', 'state', 'time',
               'twitter', 'website', 'verified', 'stage', 'creator', 'created',
