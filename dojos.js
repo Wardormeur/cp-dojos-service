@@ -57,6 +57,8 @@ var cmd_get_dojo_stats = require('./lib/dojos/stats');
 var cmd_search_join_requests = require('./lib/dojos/search-join-requests');
 
 var cmd_backfill_champions = require('./lib/backfill-champions');
+var cmd_backfill_dojos = require('./lib/dojos/backfill-dojo-sanitization');
+var cmd_sanitize_dojo = require('./lib/dojos/dojo-sanitization');
 
 var logger;
 
@@ -173,10 +175,11 @@ module.exports = function (options) {
 
   // One shot
   seneca.add({role: plugin, cmd: 'backfill_champions'}, cmd_backfill_champions);
+  seneca.add({role: plugin, cmd: 'backfillDojosSanitization'}, cmd_backfill_dojos);
+  seneca.add({role: plugin, cmd: 'sanitizeDojo'}, cmd_sanitize_dojo);
 
   if (options.kue && options.kue.start) {
-    var kues = ['batch-poller', 'sms-poll', 'email-poll'];
-
+    var kues = ['batch-poller', 'sms-poll', 'email-poll', 'dojo-generic-kue'];
     seneca.act({role: 'kue-queue', cmd: 'start', config: options.kue}, function (err, queue) {
       if (!err) {
         async.eachSeries(kues, function (kue, cb) {
