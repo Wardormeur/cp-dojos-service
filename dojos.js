@@ -6,7 +6,6 @@ var shortid = require('shortid');
 var crypto = require('crypto');
 var randomstring = require('randomstring');
 var moment = require('moment');
-var pg = require('pg');
 var request = require('request').defaults({json: true});
 var isoc = require('isoc');
 var countries = require('./data/countries');
@@ -150,8 +149,8 @@ module.exports = function (options) {
   seneca.add({role: plugin, cmd: 'load_ticketing_admins'}, cmd_load_ticketing_admins);
   seneca.add({role: plugin, cmd: 'user_is_dojo_admin'}, cmd_user_is_dojo_admin);
   seneca.add({role: plugin, cmd: 'update_founder'}, cmd_update_dojo_founder);
-  seneca.add({role: plugin, cmd: 'search_nearest_dojos'}, cmd_search_nearest_dojos);
-  seneca.add({role: plugin, cmd: 'search_bounding_box'}, cmd_search_bounding_box);
+  seneca.add({role: plugin, cmd: 'search_nearest_dojos'}, require('./lib/controllers/dojo/search-nearest-dojos'));
+  seneca.add({role: plugin, cmd: 'search_bounding_box'}, require('./lib/controllers/dojo/search-bounding-box'));
   seneca.add({role: plugin, cmd: 'list_query'}, cmd_list_query);
   seneca.add({role: plugin, cmd: 'find_dojolead'}, cmd_find_dojolead);
   seneca.add({role: plugin, cmd: 'load_dojo_email'}, cmd_load_dojo_email);
@@ -1329,78 +1328,6 @@ module.exports = function (options) {
     var dojosEntity = seneca.make$(ENTITY_NS);
     if (!query.limit$) query.limit$ = 'NULL';
     dojosEntity.list$(query, done);
-  }
-
-  function cmd_search_nearest_dojos (args, done) {
-    logger.info({args: args}, 'cmd_search_nearest_dojos');
-    var localPgOptions = _.defaults({}, options.postgresql);
-    localPgOptions.database = _.get(options, 'postgresql.name');
-    localPgOptions.user = _.get(options, 'postgresql.username');
-
-    var searchLat = args.query.lat;
-    var searchLon = args.query.lon;
-
-    var search = args.query.search || null;
-
-    var psqlQuery;
-    var psqlQueryVariables;
-
-    if (search) {
-      search = '%' + search + '%';
-      psqlQuery = "SELECT *, earth_distance(ll_to_earth($1, $2), ll_to_earth((geo_point->'lat')::text::float8, (geo_point->'lon')::text::float8)) AS distance_from_search_location FROM cd_dojos WHERE stage != 4 AND verified != 0 AND deleted != 1 OR name ILIKE $3 ORDER BY distance_from_search_location ASC LIMIT 10";
-      psqlQueryVariables = [searchLat, searchLon, search];
-    } else {
-      return done(null, []);
-    }
-
-    pg.connect(localPgOptions, function (err, client) {
-      if (err) return done(err);
-      client.query(psqlQuery, psqlQueryVariables, function (err, results) {
-        if (err) return done(err);
-        client.end();
-        _.each(results.rows, function (dojo) {
-          dojo.user_invites = purgeInviteEmails(dojo.user_invites);
-          dojo = purgeEBFields(dojo);
-        });
-        return done(null, results.rows);
-      });
-    });
-  }
-
-  function cmd_search_bounding_box (args, done) {
-    logger.info({args: args}, 'cmd_search_bounding_box');
-    var localPgOptions = _.defaults({}, options.postgresql);
-    localPgOptions.database = _.get(options, 'postgresql.name');
-    localPgOptions.user = _.get(options, 'postgresql.username');
-
-    var searchLat = args.query.lat;
-    var searchLon = args.query.lon;
-    var boundsRadius = args.query.radius;
-    var search = args.query.search || null;
-
-    var psqlQuery;
-    var psqlQueryVariables;
-    if (search) {
-      search = '%' + search + '%';
-      psqlQuery = "SELECT *, earth_distance(ll_to_earth($1, $2), ll_to_earth((geo_point->'lat')::text::float8, (geo_point->'lon')::text::float8)) AS distance_from_search_location FROM cd_dojos WHERE stage != 4 AND deleted != 1 AND verified != 0 AND (earth_box(ll_to_earth($1, $2), $3) @> ll_to_earth((geo_point->'lat')::text::float8, (geo_point->'lon')::text::float8) OR name ILIKE $4) ORDER BY distance_from_search_location ASC";
-      psqlQueryVariables = [searchLat, searchLon, boundsRadius, search];
-    } else {
-      psqlQuery = "SELECT *, earth_distance(ll_to_earth($1, $2), ll_to_earth((geo_point->'lat')::text::float8, (geo_point->'lon')::text::float8)) AS distance_from_search_location FROM cd_dojos WHERE stage != 4 AND deleted != 1 AND verified != 0 AND earth_box(ll_to_earth($1, $2), $3) @> ll_to_earth((geo_point->'lat')::text::float8, (geo_point->'lon')::text::float8) ORDER BY distance_from_search_location ASC";
-      psqlQueryVariables = [searchLat, searchLon, boundsRadius];
-    }
-
-    pg.connect(localPgOptions, function (err, client) {
-      if (err) return done(err);
-      client.query(psqlQuery, psqlQueryVariables, function (err, results) {
-        if (err) return done(err);
-        client.end();
-        _.each(results.rows, function (dojo) {
-          dojo.user_invites = purgeInviteEmails(dojo.user_invites);
-          dojo = purgeEBFields(dojo);
-        });
-        return done(null, results.rows);
-      });
-    });
   }
 
   function cmd_load_dojo_email (args, done) {
