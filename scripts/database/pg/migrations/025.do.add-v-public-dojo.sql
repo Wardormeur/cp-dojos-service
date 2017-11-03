@@ -55,7 +55,11 @@ DO $$
         day,
         start_time,
         end_time,
-        frequency
+        frequency,
+        CASE WHEN (eventbrite_token IS NOT NULL AND eventbrite_wh_id IS NOT NULL)
+          THEN true
+          ELSE false
+        END as eventbrite_connected
         FROM cd_dojos
       );
   EXCEPTION
