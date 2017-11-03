@@ -62,7 +62,6 @@ module.exports = function (options) {
   var plugin = 'cd-dojos';
   var ENTITY_NS = 'cd/dojos';
   var USER_DOJO_ENTITY_NS = 'cd/usersdojos';
-  var STATS_ENTITY_NS = 'cd/stats';
   var DOJO_LEADS_ENTITY_NS = 'cd/dojoleads';
   var DEFAULT_INVITE_USER_TYPE = 'mentor';
   var dojoConfig = require('./data/dojos_config');
@@ -86,7 +85,6 @@ module.exports = function (options) {
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'search_bounding_box'}, require('./lib/controllers/dojo/search-bounding-box'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'joinedDojos'}, require('./lib/controllers/dojo/joined-dojos'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'dojos_by_country'}, require('./lib/controllers/dojo/dojos-by-country'));
-  seneca.add({role: plugin, ctrl: 'dojo', cmd: 'dojos_by_continent'}, require('./lib/controllers/dojo/dojos-by-continent'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'dojos_for_user'}, require('./lib/controllers/dojo/dojos-for-user'));
   // Note : you mostly don't want to search from cd_dojos but rather v_dojos_public_fields, see after
   // Alias old behavior
@@ -95,7 +93,6 @@ module.exports = function (options) {
   seneca.add({role: plugin, cmd: 'list'}, require('./lib/controllers/dojo_public_fields/list')); // backward compat
   seneca.add({role: plugin, cmd: 'find'}, require('./lib/controllers/dojo_public_fields/find'));
   seneca.add({role: plugin, cmd: 'load'}, require('./lib/controllers/dojo_public_fields/load'));
-  seneca.add({role: plugin, cmd: 'get_stats'}, require('./lib/controllers/dojo/dojos-by-continent'));
   seneca.add({role: plugin, cmd: 'dojos_for_user'}, require('./lib/controllers/dojo/dojos-for-user'));
 
   // Dojos public field controllers
@@ -103,6 +100,9 @@ module.exports = function (options) {
   seneca.add({role: plugin, ctrl: 'dojo_public_fields', cmd: 'load'}, require('./lib/controllers/dojo_public_fields/load'));
   seneca.add({role: plugin, ctrl: 'dojo_public_fields', cmd: 'list'}, require('./lib/controllers/dojo_public_fields/list'));
   seneca.add({role: plugin, ctrl: 'dojo_public_fields', cmd: 'find'}, require('./lib/controllers/dojo_public_fields/find'));
+
+  // Dojo-stats entity
+  seneca.add({role: plugin, ctrl: 'stats', cmd: 'by_continent'}, require('./lib/controllers/stats/dojos-by-continent'));
 
   // Legacy
   seneca.add({role: plugin, cmd: 'update_image'}, cmd_update_image);

@@ -55,9 +55,11 @@ module.exports = function () {
         role: 'cdf-admin'
       }],
 
-      'get_stats': [{
-        role: 'cdf-admin'
-      }],
+      'stats': {
+        'by_continent': [{
+          role: 'cdf-admin'
+        }],
+      },
 
       'load_setup_dojo_steps': [{
         role: 'basic-user'
