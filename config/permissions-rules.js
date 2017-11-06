@@ -41,9 +41,6 @@ module.exports = function () {
             perm: 'dojo-admin'
         }]
       }],
-      'dojos_by_country': [{
-        role: 'none'
-      }],
       'list': [{
         role: 'none',
       }],
@@ -226,7 +223,13 @@ module.exports = function () {
         }],
         'delete': [{
           role: 'cdf-admin'
-        }]
+        }],
+        'dojos_for_user': [{
+          role: 'basic-user'
+        }],
+        'by_country': [{
+          role: 'none'
+        }],
       },
       'lead': {
         'search': [{

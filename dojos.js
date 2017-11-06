@@ -84,7 +84,7 @@ module.exports = function (options) {
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'search_nearest_dojos'}, require('./lib/controllers/dojo/search-nearest-dojos'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'search_bounding_box'}, require('./lib/controllers/dojo/search-bounding-box'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'joinedDojos'}, require('./lib/controllers/dojo/joined-dojos'));
-  seneca.add({role: plugin, ctrl: 'dojo', cmd: 'dojos_by_country'}, require('./lib/controllers/dojo/dojos-by-country'));
+  seneca.add({role: plugin, ctrl: 'dojo', cmd: 'by_country'}, require('./lib/controllers/dojo/dojos-by-country'));
   seneca.add({role: plugin, ctrl: 'dojo', cmd: 'dojos_for_user'}, require('./lib/controllers/dojo/dojos-for-user'));
   // Note : you mostly don't want to search from cd_dojos but rather v_dojos_public_fields, see after
   // Alias old behavior
