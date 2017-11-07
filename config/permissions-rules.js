@@ -14,13 +14,6 @@ module.exports = function () {
       'get_dojo_config': [{
         role: 'none'
       }],
-      'search_bounding_box': [{
-        role: 'none'
-      }],
-      //Used by front-e resolver, must restrict fields
-      'find': [{
-        role: 'none'
-      }],
       'search': [{
         role: 'cdf-admin'
       }],
@@ -41,10 +34,13 @@ module.exports = function () {
             perm: 'dojo-admin'
         }]
       }],
+      //Used by front-e resolver, must restrict fields
+      'find': [{
+        role: 'none'
+      }],
       'list': [{
         role: 'none',
       }],
-
       'load': [{
         role: 'none'
       }],
@@ -172,9 +168,6 @@ module.exports = function () {
         role: 'none'
       }],
 
-      'search_nearest_dojos': [{
-        role: 'none'
-      }],
 
       'list_countries': [{
         role: 'none'
@@ -230,6 +223,23 @@ module.exports = function () {
         'by_country': [{
           role: 'none'
         }],
+        'search_nearest_dojos': [{
+          role: 'none'
+        }],
+        'search_bounding_box': [{
+          role: 'none'
+        }],
+      },
+      'dojo_public_fields': {
+        'load': [{
+          role: 'none'
+        }],
+        'find': [{
+          role: 'none'
+        }],
+        'list': [{
+          role: 'none'
+        }]
       },
       'lead': {
         'search': [{
